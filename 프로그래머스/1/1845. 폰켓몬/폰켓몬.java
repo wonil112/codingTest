@@ -1,21 +1,16 @@
-import java.util.*;
+import java.util.Arrays;
 
 class Solution {
     public int solution(int[] nums) {
-        int answer = 0;
+    
+        int answer = (nums.length / 2);
         
-        Arrays.sort(nums);
+        int[] distinctArray = Arrays.stream(nums).distinct().toArray();
         
-        int checkNum = 0;
-        
-        for (int i = 0; i < nums.length; i++) {
-            if (checkNum != nums[i]) {
-                answer ++;
-                checkNum = nums[i];
-            }
-            if(answer == (nums.length) / 2) return answer;
+        if(answer >= distinctArray.length) {
+            return distinctArray.length;
+        } else {
+            return answer; 
         }
-        
-        return answer;
     }
 }
