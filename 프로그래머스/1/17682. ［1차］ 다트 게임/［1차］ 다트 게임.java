@@ -1,15 +1,16 @@
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.List;
 
 class Solution {
     public int solution(String dartResult) {
-        List<Integer> scores = new ArrayList<>();
-        int length = dartResult.length();
         int i = 0;
+        List<Integer> scores = new ArrayList<>();
+        char powChar;
+        int lastIndex = 0;
 
-        while (i < length) {
-            int score;
-            if (dartResult.charAt(i) == '1' && dartResult.charAt(i + 1) == '0') {
+        while (i < dartResult.length()) {
+            int score = 0;
+            if(i + 1 < dartResult.length() && dartResult.charAt(i) == '1' && dartResult.charAt(i+1) == '0') {
                 score = 10;
                 i += 2;
             } else {
@@ -17,41 +18,35 @@ class Solution {
                 i++;
             }
 
-            char bonus = dartResult.charAt(i);
-            i++;
-            score = calculateBaseScore(score, bonus);
-
-            if (i < length && (dartResult.charAt(i) == '*' || dartResult.charAt(i) == '#')) {
-                char option = dartResult.charAt(i);
+            if(i < dartResult.length()) {
+                powChar = dartResult.charAt(i);
+                score = powScore(score, powChar);
                 i++;
-                applyOption(scores, score, option);
-            } else {
-                scores.add(score);
             }
+
+            if(i < dartResult.length() && (dartResult.charAt(i) == '*' || dartResult.charAt(i) == '#')) {
+                if(dartResult.charAt(i) == '#') {
+                    score *= -1;
+                } else if (dartResult.charAt(i) == '*') {
+                    if(!scores.isEmpty()) {
+                        lastIndex = scores.size() - 1;
+                        scores.set(lastIndex, scores.get(lastIndex) * 2);
+                    }
+                    score *= 2;
+                }
+                i++;
+            }
+            scores.add(score);
         }
 
         return scores.stream().mapToInt(Integer::intValue).sum();
     }
 
-    private static int calculateBaseScore(int score, char bonus) {
-        return switch (bonus) {
+    public static int powScore(int score, char powChar) {
+        return switch (powChar) {
             case 'D' -> (int) Math.pow(score, 2);
             case 'T' -> (int) Math.pow(score, 3);
             default -> score;
         };
-    }
-
-    private static void applyOption(List<Integer> scores, int score, char option) {
-        if (option == '*') {
-            if (!scores.isEmpty()) {
-                int lastIndex = scores.size() - 1;
-                scores.set(lastIndex, scores.get(lastIndex) * 2);
-            }
-            scores.add(score * 2);
-        } else if (option == '#') {
-            scores.add(score * -1);
-        } else {
-            scores.add(score);
-        }
     }
 }
